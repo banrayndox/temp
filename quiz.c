@@ -1,91 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/// ==========================================
+/// =============================================
 /// SINGLY LINKED LIST
-/// ==========================================
-struct SNode {
+/// =============================================
+struct Node {
     int data;
-    struct SNode *next;
+    struct Node *next;
 };
-struct SNode *shead = NULL;
+struct Node *head = NULL;
 
-void s_insert_end(int value) {
-    struct SNode *newNode = malloc(sizeof(struct SNode));
+void insertEnd(int value) {
+    struct Node *newNode = malloc(sizeof(struct Node));
     newNode->data = value;
     newNode->next = NULL;
-    if (shead == NULL) shead = newNode;
+    if (head == NULL)
+        head = newNode;
     else {
-        struct SNode *temp = shead;
-        while (temp->next != NULL) temp = temp->next;
+        struct Node *temp = head;
+        while (temp->next != NULL)
+            temp = temp->next;
         temp->next = newNode;
     }
 }
 
-void s_insert_pos(int value, int pos) {
-    struct SNode *newNode = malloc(sizeof(struct SNode));
-    newNode->data = value;
-    if (pos == 1) {
-        newNode->next = shead;
-        shead = newNode;
-        return;
-    }
-    struct SNode *temp = shead;
-    for (int i = 1; temp != NULL && i < pos - 1; i++)
-        temp = temp->next;
-    if (temp == NULL) {
-        printf("Invalid position!\n");
-        free(newNode);
-        return;
-    }
-    newNode->next = temp->next;
-    temp->next = newNode;
-}
-
-void s_delete(int value) {
-    struct SNode *temp = shead, *prev = NULL;
-    if (temp != NULL && temp->data == value) {
-        shead = temp->next;
-        free(temp);
-        return;
-    }
+void deleteNode(int value) {
+    struct Node *temp = head, *prev = NULL;
     while (temp != NULL && temp->data != value) {
         prev = temp;
         temp = temp->next;
     }
     if (temp == NULL) return;
-    prev->next = temp->next;
+    if (prev == NULL) head = temp->next;
+    else prev->next = temp->next;
     free(temp);
 }
 
-void s_search(int value) {
-    struct SNode *temp = shead;
-    int pos = 1;
-    while (temp != NULL) {
-        if (temp->data == value) {
-            printf("Found %d at position %d\n", value, pos);
-            return;
-        }
-        temp = temp->next;
-        pos++;
-    }
-    printf("%d not found!\n", value);
-}
-
-void s_reverse() {
-    struct SNode *prev = NULL, *curr = shead, *next = NULL;
+void reverseList() {
+    struct Node *prev = NULL, *curr = head, *next = NULL;
     while (curr != NULL) {
         next = curr->next;
         curr->next = prev;
         prev = curr;
         curr = next;
     }
-    shead = prev;
+    head = prev;
 }
 
-void s_display() {
-    struct SNode *temp = shead;
-    printf("Singly Linked List: ");
+void displayList() {
+    struct Node *temp = head;
+    printf("Linked List: ");
     while (temp != NULL) {
         printf("%d ", temp->data);
         temp = temp->next;
@@ -93,141 +57,36 @@ void s_display() {
     printf("\n");
 }
 
-/// ==========================================
-/// DOUBLY LINKED LIST
-/// ==========================================
-struct DNode {
+/// =============================================
+/// STACK USING LINKED LIST
+/// =============================================
+struct StackNode {
     int data;
-    struct DNode *next, *prev;
+    struct StackNode *next;
 };
-struct DNode *dhead = NULL;
+struct StackNode *top = NULL;
 
-void d_insert_end(int value) {
-    struct DNode *newNode = malloc(sizeof(struct DNode));
-    newNode->data = value;
-    newNode->next = newNode->prev = NULL;
-    if (dhead == NULL) dhead = newNode;
-    else {
-        struct DNode *temp = dhead;
-        while (temp->next != NULL) temp = temp->next;
-        temp->next = newNode;
-        newNode->prev = temp;
-    }
-}
-
-void d_insert_pos(int value, int pos) {
-    struct DNode *newNode = malloc(sizeof(struct DNode));
-    newNode->data = value;
-    newNode->next = newNode->prev = NULL;
-    if (pos == 1) {
-        newNode->next = dhead;
-        if (dhead) dhead->prev = newNode;
-        dhead = newNode;
-        return;
-    }
-    struct DNode *temp = dhead;
-    for (int i = 1; temp != NULL && i < pos - 1; i++)
-        temp = temp->next;
-    if (temp == NULL) {
-        printf("Invalid position!\n");
-        free(newNode);
-        return;
-    }
-    newNode->next = temp->next;
-    if (temp->next) temp->next->prev = newNode;
-    temp->next = newNode;
-    newNode->prev = temp;
-}
-
-void d_delete(int value) {
-    struct DNode *temp = dhead;
-    while (temp != NULL && temp->data != value)
-        temp = temp->next;
-    if (temp == NULL) return;
-    if (temp->prev != NULL) temp->prev->next = temp->next;
-    else dhead = temp->next;
-    if (temp->next != NULL) temp->next->prev = temp->prev;
-    free(temp);
-}
-
-void d_search(int value) {
-    struct DNode *temp = dhead;
-    int pos = 1;
-    while (temp != NULL) {
-        if (temp->data == value) {
-            printf("Found %d at position %d\n", value, pos);
-            return;
-        }
-        temp = temp->next;
-        pos++;
-    }
-    printf("%d not found!\n", value);
-}
-
-void d_reverse() {
-    struct DNode *temp = NULL, *curr = dhead;
-    while (curr != NULL) {
-        temp = curr->prev;
-        curr->prev = curr->next;
-        curr->next = temp;
-        curr = curr->prev;
-    }
-    if (temp != NULL)
-        dhead = temp->prev;
-}
-
-void d_display_forward() {
-    struct DNode *temp = dhead;
-    printf("Doubly Linked List (Forward): ");
-    while (temp != NULL) {
-        printf("%d ", temp->data);
-        temp = temp->next;
-    }
-    printf("\n");
-}
-
-void d_display_backward() {
-    if (dhead == NULL) return;
-    struct DNode *temp = dhead;
-    while (temp->next != NULL) temp = temp->next;
-    printf("Doubly Linked List (Backward): ");
-    while (temp != NULL) {
-        printf("%d ", temp->data);
-        temp = temp->prev;
-    }
-    printf("\n");
-}
-
-/// ==========================================
-/// STACK (Linked List)
-/// ==========================================
-struct Stack {
-    int data;
-    struct Stack *next;
-};
-struct Stack *top = NULL;
-
-void push(int value) {
-    struct Stack *newNode = malloc(sizeof(struct Stack));
+void pushLL(int value) {
+    struct StackNode *newNode = malloc(sizeof(struct StackNode));
     newNode->data = value;
     newNode->next = top;
     top = newNode;
 }
 
-void pop() {
+void popLL() {
     if (top == NULL) {
         printf("Stack Underflow!\n");
         return;
     }
-    struct Stack *temp = top;
-    printf("Popped: %d\n", temp->data);
+    struct StackNode *temp = top;
+    printf("Popped (LL Stack): %d\n", temp->data);
     top = top->next;
     free(temp);
 }
 
-void display_stack() {
-    struct Stack *temp = top;
-    printf("Stack (Top to Bottom): ");
+void displayStackLL() {
+    struct StackNode *temp = top;
+    printf("Stack (Linked List): ");
     while (temp != NULL) {
         printf("%d ", temp->data);
         temp = temp->next;
@@ -235,17 +94,47 @@ void display_stack() {
     printf("\n");
 }
 
-/// ==========================================
-/// QUEUE (Linked List)
-/// ==========================================
-struct Queue {
-    int data;
-    struct Queue *next;
-};
-struct Queue *front = NULL, *rear = NULL;
+/// =============================================
+/// STACK USING ARRAY
+/// =============================================
+#define MAX 5
+int stack[MAX];
+int topIndex = -1;
 
-void enqueue(int value) {
-    struct Queue *newNode = malloc(sizeof(struct Queue));
+void pushArr(int value) {
+    if (topIndex == MAX - 1) {
+        printf("Stack Overflow!\n");
+        return;
+    }
+    stack[++topIndex] = value;
+}
+
+void popArr() {
+    if (topIndex == -1) {
+        printf("Stack Underflow!\n");
+        return;
+    }
+    printf("Popped (Array Stack): %d\n", stack[topIndex--]);
+}
+
+void displayStackArr() {
+    printf("Stack (Array): ");
+    for (int i = topIndex; i >= 0; i--)
+        printf("%d ", stack[i]);
+    printf("\n");
+}
+
+/// =============================================
+/// QUEUE USING LINKED LIST
+/// =============================================
+struct QueueNode {
+    int data;
+    struct QueueNode *next;
+};
+struct QueueNode *front = NULL, *rear = NULL;
+
+void enqueueLL(int value) {
+    struct QueueNode *newNode = malloc(sizeof(struct QueueNode));
     newNode->data = value;
     newNode->next = NULL;
     if (rear == NULL)
@@ -256,21 +145,21 @@ void enqueue(int value) {
     }
 }
 
-void dequeue() {
+void dequeueLL() {
     if (front == NULL) {
         printf("Queue Underflow!\n");
         return;
     }
-    struct Queue *temp = front;
-    printf("Dequeued: %d\n", temp->data);
+    struct QueueNode *temp = front;
+    printf("Dequeued (LL Queue): %d\n", temp->data);
     front = front->next;
     if (front == NULL) rear = NULL;
     free(temp);
 }
 
-void display_queue() {
-    struct Queue *temp = front;
-    printf("Queue (Front to Rear): ");
+void displayQueueLL() {
+    struct QueueNode *temp = front;
+    printf("Queue (Linked List): ");
     while (temp != NULL) {
         printf("%d ", temp->data);
         temp = temp->next;
@@ -278,57 +167,92 @@ void display_queue() {
     printf("\n");
 }
 
-/// ==========================================
-/// MAIN FUNCTION (Demo)
-/// ==========================================
+/// =============================================
+/// QUEUE USING ARRAY (Circular)
+/// =============================================
+int queue[MAX];
+int frontIndex = 0, rearIndex = -1, size = 0;
+
+void enqueueArr(int value) {
+    if (size == MAX) {
+        printf("Queue Overflow!\n");
+        return;
+    }
+    rearIndex = (rearIndex + 1) % MAX;
+    queue[rearIndex] = value;
+    size++;
+}
+
+void dequeueArr() {
+    if (size == 0) {
+        printf("Queue Underflow!\n");
+        return;
+    }
+    printf("Dequeued (Array Queue): %d\n", queue[frontIndex]);
+    frontIndex = (frontIndex + 1) % MAX;
+    size--;
+}
+
+void displayQueueArr() {
+    printf("Queue (Array): ");
+    for (int i = 0; i < size; i++)
+        printf("%d ", queue[(frontIndex + i) % MAX]);
+    printf("\n");
+}
+
+/// =============================================
+/// MAIN FUNCTION — Function Calls Only
+/// =============================================
 int main() {
-    // Singly Linked List demo
-    s_insert_end(10);
-    s_insert_end(20);
-    s_insert_end(30);
-    s_insert_pos(15, 2);
-    s_display();
-    s_search(20);
-    s_delete(15);
-    s_display();
-    s_reverse();
-    printf("After reverse: ");
-    s_display();
+    // Singly Linked List
+    insertEnd(10);
+    insertEnd(20);
+    insertEnd(30);
+    displayList();
+    deleteNode(20);
+    displayList();
+    reverseList();
+    displayList();
 
     printf("\n");
 
-    // Doubly Linked List demo
-    d_insert_end(1);
-    d_insert_end(2);
-    d_insert_end(3);
-    d_insert_pos(10, 2);
-    d_display_forward();
-    d_display_backward();
-    d_delete(10);
-    d_display_forward();
-    d_reverse();
-    printf("After reverse: ");
-    d_display_forward();
+    // Stack using Linked List
+    pushLL(100);
+    pushLL(200);
+    pushLL(300);
+    displayStackLL();
+    popLL();
+    displayStackLL();
 
     printf("\n");
 
-    // Stack demo
-    push(100);
-    push(200);
-    push(300);
-    display_stack();
-    pop();
-    display_stack();
+    // Stack using Array
+    pushArr(5);
+    pushArr(10);
+    pushArr(15);
+    displayStackArr();
+    popArr();
+    displayStackArr();
 
     printf("\n");
 
-    // Queue demo
-    enqueue(5);
-    enqueue(10);
-    enqueue(15);
-    display_queue();
-    dequeue();
-    display_queue();
+    // Queue using Linked List
+    enqueueLL(11);
+    enqueueLL(22);
+    enqueueLL(33);
+    displayQueueLL();
+    dequeueLL();
+    displayQueueLL();
+
+    printf("\n");
+
+    // Queue using Array
+    enqueueArr(7);
+    enqueueArr(14);
+    enqueueArr(21);
+    displayQueueArr();
+    dequeueArr();
+    displayQueueArr();
 
     return 0;
 }
