@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /*-----------------------------
-        Singly Linked List
+       Singly Linked List
 ------------------------------*/
 struct SNode {
     int data;
@@ -11,18 +11,23 @@ struct SNode {
 
 struct SNode* sHead = NULL;
 
-// Insert
-void sInsertBegin(int val) {
+// Create Node
+struct SNode* createSNode(int val) {
     struct SNode* newNode = (struct SNode*)malloc(sizeof(struct SNode));
     newNode->data = val;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Insert
+void sInsertBegin(int val) {
+    struct SNode* newNode = createSNode(val);
     newNode->next = sHead;
     sHead = newNode;
 }
 
 void sInsertEnd(int val) {
-    struct SNode* newNode = (struct SNode*)malloc(sizeof(struct SNode));
-    newNode->data = val;
-    newNode->next = NULL;
+    struct SNode* newNode = createSNode(val);
 
     if (!sHead) {
         sHead = newNode;
@@ -35,17 +40,14 @@ void sInsertEnd(int val) {
 }
 
 void sInsertPos(int val, int pos) {
-    if (pos == 1) { 
-        sInsertBegin(val); 
-        return; 
+    if (pos == 1) {
+        sInsertBegin(val);
+        return;
     }
 
-    struct SNode* newNode = (struct SNode*)malloc(sizeof(struct SNode));
-    newNode->data = val;
-
+    struct SNode* newNode = createSNode(val);
     struct SNode* temp = sHead;
-    for (int i = 1; i < pos - 1 && temp; i++) 
-        temp = temp->next;
+    for (int i = 1; i < pos - 1 && temp; i++) temp = temp->next;
 
     if (!temp) return;
 
@@ -63,11 +65,7 @@ void sDeleteBegin() {
 
 void sDeleteEnd() {
     if (!sHead) return;
-    if (!sHead->next) { 
-        free(sHead); 
-        sHead = NULL; 
-        return; 
-    }
+    if (!sHead->next) { free(sHead); sHead = NULL; return; }
 
     struct SNode* temp = sHead;
     while (temp->next->next) temp = temp->next;
@@ -77,14 +75,10 @@ void sDeleteEnd() {
 
 void sDeletePos(int pos) {
     if (!sHead) return;
-    if (pos == 1) { 
-        sDeleteBegin(); 
-        return; 
-    }
+    if (pos == 1) { sDeleteBegin(); return; }
 
     struct SNode* temp = sHead;
-    for (int i = 1; i < pos - 1 && temp->next; i++) 
-        temp = temp->next;
+    for (int i = 1; i < pos - 1 && temp->next; i++) temp = temp->next;
 
     if (!temp->next) return;
 
@@ -123,7 +117,6 @@ void sReverse() {
 // Sort
 void sSort() {
     if (!sHead) return;
-
     struct SNode *i, *j;
     for (i = sHead; i->next; i = i->next) {
         for (j = i->next; j; j = j->next) {
@@ -171,27 +164,26 @@ struct DNode {
 
 struct DNode* dHead = NULL;
 
-// Insert
-void dInsertBegin(int val) {
+// Create Node
+struct DNode* createDNode(int val) {
     struct DNode* newNode = (struct DNode*)malloc(sizeof(struct DNode));
     newNode->data = val;
+    newNode->next = NULL;
     newNode->prev = NULL;
-    newNode->next = dHead;
+    return newNode;
+}
 
+// Insert
+void dInsertBegin(int val) {
+    struct DNode* newNode = createDNode(val);
+    newNode->next = dHead;
     if (dHead) dHead->prev = newNode;
     dHead = newNode;
 }
 
 void dInsertEnd(int val) {
-    struct DNode* newNode = (struct DNode*)malloc(sizeof(struct DNode));
-    newNode->data = val;
-    newNode->next = NULL;
-
-    if (!dHead) { 
-        newNode->prev = NULL; 
-        dHead = newNode; 
-        return;
-    }
+    struct DNode* newNode = createDNode(val);
+    if (!dHead) { dHead = newNode; return; }
 
     struct DNode* temp = dHead;
     while (temp->next) temp = temp->next;
@@ -201,19 +193,14 @@ void dInsertEnd(int val) {
 }
 
 void dInsertPos(int val, int pos) {
-    if (pos == 1) { 
-        dInsertBegin(val); 
-        return; 
-    }
+    if (pos == 1) { dInsertBegin(val); return; }
 
     struct DNode* temp = dHead;
-    for (int i = 1; i < pos - 1 && temp; i++) 
-        temp = temp->next;
+    for (int i = 1; i < pos - 1 && temp; i++) temp = temp->next;
 
     if (!temp) return;
 
-    struct DNode* newNode = (struct DNode*)malloc(sizeof(struct DNode));
-    newNode->data = val;
+    struct DNode* newNode = createDNode(val);
     newNode->next = temp->next;
     newNode->prev = temp;
 
@@ -287,7 +274,6 @@ void dReverse() {
 // Sort
 void dSort() {
     if (!dHead) return;
-
     struct DNode *i, *j;
     for (i = dHead; i->next; i = i->next) {
         for (j = i->next; j; j = j->next) {
@@ -316,52 +302,52 @@ void dDisplay() {
 int main() {
 
     // Singly LL Example
-    sInsertBegin(20); 
-    sInsertBegin(10); 
-    sInsertEnd(30); 
+    sInsertBegin(20);
+    sInsertBegin(10);
+    sInsertEnd(30);
     sInsertPos(25, 3);
     sDisplay();
 
-    sUpdate(25, 22); 
+    sUpdate(25, 22);
     sDisplay();
 
-    sReverse(); 
+    sReverse();
     sDisplay();
 
-    sSort(); 
+    sSort();
     sDisplay();
 
     // Stack
-    push(5); 
+    push(5);
     sDisplay();
-    pop(); 
+    pop();
     sDisplay();
     printf("Stack top: %d\n", peek());
 
     // Queue
-    enqueue(35); 
+    enqueue(35);
     sDisplay();
-    dequeue(); 
+    dequeue();
     sDisplay();
     printf("Queue front: %d\n", front());
 
     // Doubly LL Example
-    dInsertBegin(10); 
-    dInsertEnd(30); 
+    dInsertBegin(10);
+    dInsertEnd(30);
     dInsertPos(20, 2);
     dDisplay();
 
-    dUpdate(20, 25); 
+    dUpdate(20, 25);
     dDisplay();
 
-    dReverse(); 
+    dReverse();
     dDisplay();
 
-    dSort(); 
+    dSort();
     dDisplay();
 
-    dDeleteBegin(); 
-    dDeleteEnd(); 
+    dDeleteBegin();
+    dDeleteEnd();
     dDisplay();
 
     return 0;
